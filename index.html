@@ -1,221 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MTN Agent Portal - Kotorkoshi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTN Agent Database</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon.jpg">
 <meta name="theme-color" content="#FFCC00">
+<link rel="icon" href="icon.jpg">
 <style>
-:root{--yellow:#FFCC00;--blue:#005B96;--dark:#003057;}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
-body{background:#eef2f7;}
-#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at top,#0077c8 0%,var(--dark) 100%);padding:15px;}
-.authBox{background:#fff;width:100%;max-width:440px;border-radius:24px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.3);}
-.authHeader{background:var(--blue);padding:22px;text-align:center;color:#fff;}.logo{font-size:30px;font-weight:900;}.logo span{background:var(--yellow);color:var(--blue);padding:2px 10px;border-radius:8px;}
-.tabs{display:flex;background:#f1f5f9;}.tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-weight:800;color:#64748b;border-bottom:3px solid transparent;}.tab.active{background:#fff;color:var(--blue);border-bottom-color:var(--yellow);}
-.form{padding:20px 24px;}.inputGroup{margin-bottom:12px;}.inputGroup label{font-size:11px;font-weight:800;color:var(--blue);display:block;margin-bottom:4px;text-transform:uppercase;}
-.inputGroup input{width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;outline:none;}.inputGroup input:focus{border-color:var(--yellow);}
-.btn{width:100%;padding:12px;border:none;border-radius:12px;font-weight:900;cursor:pointer;margin-top:8px;}.btn-yellow{background:var(--yellow);color:var(--blue);}.btn-blue{background:var(--blue);color:#fff;}
-.msg{padding:9px;border-radius:10px;font-size:12px;margin-top:8px;display:none;font-weight:700;text-align:center;}.error{background:#fee2e2;color:#b91c1c;}.success{background:#dcfce7;color:#15803d;}
-.link{font-size:12px;color:var(--blue);cursor:pointer;text-decoration:underline;font-weight:700;margin-top:8px;display:inline-block;}
-#successOverlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);align-items:center;justify-content:center;z-index:20;}
-.successBox{background:#fff;padding:30px;border-radius:20px;text-align:center;width:90%;max-width:360px;animation:pop.3s ease;}
-@keyframes pop{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}
-#forgotModal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:10;}
-.forgotBox{background:#fff;padding:22px;border-radius:16px;width:90%;max-width:360px;}
-#dashboardScreen{display:none;min-height:100vh;}
-.sidebar{width:260px;background:var(--blue);color:#fff;display:flex;flex-direction:column;position:fixed;height:100vh;top:0;left:0;}
-.main{margin-left:260px;padding:22px;}
-.sideLogo{font-size:24px;font-weight:900;text-align:center;padding:18px 0;}.sideLogo span{background:var(--yellow);color:var(--blue);padding:2px 8px;border-radius:6px;}
-.userCard{background:var(--dark);margin:0 12px 12px;padding:12px;border-radius:12px;}.userCard b{font-size:13px;}.userCard small{font-size:11px;color:#94a3b8;display:block;word-break:break-all;}
-.menu a{display:block;padding:11px 20px;color:#cbd5e1;text-decoration:none;cursor:pointer;border-left:4px solid transparent;font-size:13px;}.menu a:hover{background:var(--dark);color:#fff;border-left-color:var(--yellow);}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px;}
-.card{background:#fff;padding:14px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.06);border-top:4px solid var(--yellow);}.card h4{font-size:10px;color:#64748b;text-transform:uppercase;}.card h1{color:var(--blue);font-size:26px;margin-top:2px;}
-.grid{display:grid;grid-template-columns:2fr 1fr;gap:12px;}.panel{background:#fff;padding:16px;border-radius:14px;box-shadow:0 4px 12px rgba(0,0,0,.06);}
-table{width:100%;border-collapse:collapse;} th{font-size:10px;color:#64748b;text-align:left;padding:8px 0;border-bottom:1px solid #e2e8f0;} td{padding:9px 0;border-bottom:1px solid #f1f5f9;font-size:12px;}
-.badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:800;}.success-bg{background:#dcfce7;color:#15803d;}.pending-bg{background:#fef9c3;color:#854d0e;}.failed-bg{background:#fee2e2;color:#b91c1c;}
-.deleteBtn{background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:10px;font-weight:800;}
-.deleteBtn:hover{background:#dc2626;}
-.empty{padding:30px;text-align:center;color:#94a3b8;font-size:13px;}
-.logoutBox{margin-top:auto;border-top:1px solid rgba(255,255,255,.15);padding:12px;}
-.logoutBtn{width:100%;padding:10px;background:#ef4444;color:#fff;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;margin-bottom:6px;}
-.createBtn{width:100%;padding:10px;background:var(--yellow);color:var(--blue);border:none;border-radius:10px;font-weight:800;cursor:pointer;font-size:12px;}
-.bar{height:8px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin:6px 0 12px;}.fill{height:100%;}
-@media(max-width:850px){.sidebar{position:relative;width:100%;height:auto;}.main{margin-left:0;}.grid{grid-template-columns:1fr;}}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f5f5f5;min-height:100vh}
+.header{background:#FFCC00;padding:15px;text-align:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+.header img{width:50px;height:50px;border-radius:50%;border:2px solid #000}
+.header h2{font-size:18px;margin-top:5px}
+.container{padding:15px;max-width:500px;margin:0 auto}
+.card{background:white;border-radius:15px;padding:20px;box-shadow:0 3px 15px rgba(0,0,0,.1);margin-bottom:15px}
+input,textarea{width:100%;padding:12px;border:2px solid #eee;border-radius:10px;margin:8px 0;font-size:15px}
+input:focus{border-color:#FFCC00;outline:none}
+.btn{width:100%;padding:13px;background:#000;color:#FFCC00;border:none;border-radius:10px;font-weight:bold;font-size:16px;margin-top:10px;cursor:pointer}
+.btn-yellow{background:#FFCC00;color:#000}
+.btn-danger{background:#ff4444;color:white}
+.agent-card{display:flex;gap:12px;background:white;border-radius:12px;padding:12px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.08);align-items:center}
+.agent-card img{width:65px;height:65px;border-radius:50%;object-fit:cover;border:2px solid #FFCC00}
+.agent-info{flex:1}
+.agent-info b{font-size:15px}
+.agent-info small{color:#666;display:block;margin-top:3px}
+.search-box{position:sticky;top:85px;z-index:9;background:#f5f5f5;padding:10px 0}
+.hidden{display:none}
+.link{color:#0066cc;text-align:center;display:block;margin:12px 0;cursor:pointer;text-decoration:underline}
+.top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.badge{background:#FFCC00;color:#000;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100;padding:15px}
+.modal-content{background:white;border-radius:15px;padding:20px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto}
+.modal-content img{width:100px;height:100px;border-radius:50%;display:block;margin:0 auto 10px;object-fit:cover;border:3px solid #FFCC00}
+.detail-row{margin:8px 0;padding:8px;background:#f9f9f9;border-radius:8px}
+.detail-row b{font-size:13px;color:#666}
+.detail-row p{font-size:15px;margin-top:2px;word-break:break-all}
 </style>
 </head>
 <body>
-
-<div id="authScreen">
-  <div class="authBox">
-    <div class="authHeader"><div class="logo">MTN<span>NG</span></div><div style="font-size:11px;opacity:.8;">Agent Portal - Kotorkoshi, Gusau</div></div>
-    <div class="tabs"><div class="tab active" id="loginTab" onclick="switchTab('login')">LOGIN</div><div class="tab" id="registerTab" onclick="switchTab('register')">CREATE ACCOUNT</div></div>
-    <div class="form" id="loginForm">
-      <div class="inputGroup"><label>Email Address</label><input id="loginEmail" type="email" placeholder="mudassir.hassan123@mtnagent.com"></div>
-      <div class="inputGroup"><label>Password</label><input id="loginPass" type="password" placeholder="Enter password"></div>
-      <div id="loginMsg" class="msg"></div>
-      <button class="btn btn-yellow" onclick="handleLogin()">LOGIN TO DASHBOARD →</button>
-      <span class="link" onclick="openForgot()">Forgot Password?</span><br>
-      <span class="link" style="color:#16a34a;" onclick="switchTab('register')">+ Create Another Account</span>
-    </div>
-    <div class="form" id="registerForm" style="display:none;">
-      <div class="inputGroup"><label>Full Name</label><input id="regName" placeholder="Mudassir Hassan"></div>
-      <div class="inputGroup"><label>Email Address</label><input id="regEmail" type="email" placeholder="example@mtnagent.com"></div>
-      <div class="inputGroup"><label>Password</label><input id="regPass" type="password" placeholder="Minimum 6 characters"></div>
-      <div class="inputGroup"><label>Confirm Password</label><input id="regPass2" type="password" placeholder="Re-enter password"></div>
-      <div id="regMsg" class="msg"></div>
-      <button class="btn btn-blue" onclick="handleRegister()">CREATE ACCOUNT</button>
-      <span class="link" onclick="switchTab('login')">Already have an account? Login</span>
-    </div>
-  </div>
+<div class="header">
+<img src="icon.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1177/1177568.png'">
+<h2>MTN Agent Database</h2>
 </div>
-
-<div id="successOverlay">
-  <div class="successBox">
-    <div style="font-size:50px;">✅</div>
-    <h2 style="color:var(--blue);margin-top:8px;">Registration Successful!</h2>
-    <p style="font-size:13px;color:#475569;margin:8px 0 15px;">Your account has been created successfully.<br>Redirecting to login...</p>
-    <div style="width:100%;height:4px;background:#e2e8f0;border-radius:10px;overflow:hidden;"><div id="progress" style="height:100%;background:var(--blue);width:0%;transition:width 2s linear;"></div></div>
-  </div>
+<div class="container">
+<div id="loginPage" class="card">
+<h3 style="text-align:center;margin-bottom:15px">Login</h3>
+<input id="loginEmail" type="email" placeholder="Enter your Email">
+<input id="loginPass" type="password" placeholder="Enter Password">
+<button class="btn" onclick="login()">LOGIN</button>
+<span class="link" onclick="showForgot()">Forgot Password?</span>
+<span class="link" onclick="showRegister()">Don't have an account? Register</span>
 </div>
-
-<div id="forgotModal"><div class="forgotBox"><h3 style="color:var(--blue);margin-bottom:10px;">Reset Password</h3><div class="inputGroup"><label>Email Address</label><input id="forgotEmail" type="email" placeholder="Enter your email"></div><div class="inputGroup"><label>New Password</label><input id="forgotNewPass" type="password" placeholder="Enter new password"></div><div id="forgotMsg" class="msg"></div><button class="btn btn-yellow" onclick="handleForgot()">Reset Password</button><button class="btn" style="background:#e2e8f0;" onclick="closeForgot()">Cancel</button></div></div>
-
-<div id="dashboardScreen">
-  <div class="sidebar">
-    <div class="sideLogo">MTN<span>NG</span></div>
-    <div class="userCard"><b id="sideName">-</b><small id="sideEmail">-</small><small style="color:#facc15;margin-top:4px;">● Online - Kotorkoshi Center</small></div>
-    <div class="menu"><a onclick="filterSim('all')">📊 Dashboard</a><a onclick="addSim()">📱 Add Device Work</a><a onclick="filterSim('success')">✅ Completed</a><a onclick="filterSim('pending')">⏳ Pending KYC</a></div>
-    <div class="logoutBox">
-      <button class="logoutBtn" onclick="handleLogout()">🚪 Logout (<span id="logoutName">-</span>)</button>
-      <button class="createBtn" onclick="handleLogoutToCreate()">➕ Create Another Account</button>
-    </div>
-  </div>
-  <div class="main">
-    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;"><h2 style="color:var(--blue);">Welcome, <span id="welcomeName">-</span></h2><div style="background:#fff;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:800;color:var(--blue);" id="liveTime"></div></div>
-    <div class="cards">
-      <div class="card"><h4>Total SIM Registered</h4><h1 id="totalSimCount">0</h1><small style="color:#16a34a;font-weight:700;">Total work done</small></div>
-      <div class="card"><h4>Devices Used Today</h4><h1 id="todayCount">0</h1></div>
-      <div class="card"><h4>Pending KYC</h4><h1 id="pendingCount">0</h1></div>
-      <div class="card"><h4>Total Devices</h4><h1 id="deviceCount">0</h1></div>
-    </div>
-    <div class="grid">
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h3 style="color:var(--blue);font-size:14px;">Device Work Log</h3><button onclick="addSim()" style="background:var(--yellow);border:none;padding:5px 10px;border-radius:8px;font-weight:800;cursor:pointer;font-size:11px;color:var(--blue);">+ Add Work</button></div>
-        <table><thead><tr><th>Device Serial Number</th><th>SIM Count</th><th>Time</th><th>Status</th><th>Action</th></tr></thead><tbody id="simTbody"></tbody></table>
-        <div id="emptyMsg" class="empty">No data yet. Click + Add Work to start recording your work. Only your own entries will show here.</div>
-      </div>
-      <div class="panel">
-        <h3 style="color:var(--blue);font-size:14px;">Performance</h3>
-        <p style="font-size:11px;color:#64748b;margin-top:10px;">Total Work Progress</p><div class="bar"><div class="fill" id="workBar" style="width:0%;background:var(--blue);"></div></div>
-        <p style="font-size:11px;color:#64748b;">Success Rate</p><div class="bar"><div class="fill" id="successBar" style="width:0%;background:var(--yellow);"></div></div>
-        <button class="btn btn-yellow" onclick="addSim()">📱 Add New Device Work</button>
-        <button class="btn" style="background:#fee2e2;color:#b91c1c;" onclick="clearAll()">🗑 Clear All Data</button>
-        <button class="btn btn-blue" onclick="exportReport()">⬇ Export Report</button>
-        <div style="margin-top:10px;padding:8px;background:#f8fafc;border-radius:8px;font-size:10px;">Logged in as:<br><b id="loggedEmail">-</b><br><br>Total SIM: <b id="sumSim">0</b> | Devices: <b id="sumDev">0</b></div>
-      </div>
-    </div>
-  </div>
+<div id="registerPage" class="card hidden">
+<h3 style="text-align:center;margin-bottom:15px">Create New Account</h3>
+<input id="regEmail" type="email" placeholder="Email Address">
+<input id="regPass" type="password" placeholder="Password (min 4 chars)">
+<input id="regPass2" type="password" placeholder="Confirm Password">
+<button class="btn" onclick="register()">REGISTER</button>
+<span class="link" onclick="showLogin()">Already have account? Login</span>
 </div>
-
+<div id="forgotPage" class="card hidden">
+<h3 style="text-align:center;margin-bottom:15px">Forgot Password</h3>
+<p style="font-size:13px;color:#666;text-align:center;margin-bottom:10px">Enter your registered Email to recover password</p>
+<input id="forgotEmail" type="email" placeholder="Your Email">
+<button class="btn" onclick="forgot()">SHOW PASSWORD</button>
+<span class="link" onclick="showLogin()">Back to Login</span>
+</div>
+<div id="appPage" class="hidden">
+<div class="top-actions">
+<span class="badge" id="userBadge"></span>
+<button style="padding:6px 12px;border-radius:20px;border:1px solid #000;background:white;font-size:12px" onclick="logout()">Logout</button>
+</div>
+<div class="card">
+<h3 id="formTitle">Add New Agent</h3>
+<input id="aName" placeholder="Agent Full Name">
+<input id="aPhone" type="tel" placeholder="Phone Number">
+<input id="aNIN" placeholder="NIN Number">
+<input id="aBVN" placeholder="BVN Number">
+<textarea id="aAddress" placeholder="Home Address" rows="2"></textarea>
+<label style="font-size:13px;margin-top:8px;display:block">Agent Photo:</label>
+<input id="aPhoto" type="file" accept="image/*">
+<img id="preview" style="width:70px;height:70px;border-radius:50%;margin-top:8px;display:none;object-fit:cover">
+<button class="btn btn-yellow" onclick="saveAgent()">SAVE AGENT</button>
+<button id="cancelEdit" class="btn hidden" style="background:#eee;color:#000" onclick="cancelEdit()">Cancel</button>
+</div>
+<div class="search-box">
+<input id="search" placeholder="🔍 Search by name, phone, NIN..." oninput="renderAgents()">
+</div>
+<div id="agentList"></div>
+<div id="noAgent" style="text-align:center;padding:30px;color:#999" class="hidden">No agents yet<br>Add your first agent</div>
+</div>
+</div>
+<div id="detailModal" class="modal hidden" onclick="if(event.target==this)closeModal()">
+<div class="modal-content">
+<img id="dPhoto" src="">
+<h3 id="dName" style="text-align:center"></h3>
+<div class="detail-row"><b>Phone Number:</b><p id="dPhone"></p></div>
+<div class="detail-row"><b>NIN Number:</b><p id="dNIN"></p></div>
+<div class="detail-row"><b>BVN Number:</b><p id="dBVN"></p></div>
+<div class="detail-row"><b>Address:</b><p id="dAddress"></p></div>
+<button class="btn btn-danger" onclick="deleteCurrent()">DELETE AGENT</button>
+<button class="btn" style="background:#eee;color:#000" onclick="closeModal()">CLOSE</button>
+</div>
+</div>
 <script>
-let users = JSON.parse(localStorage.getItem('mtn_users')||'[]');
-// Only default admin account - no fake work data
-if(!users.find(u=>u.email==='mudassir.hassan123@mtnagent.com')){
-  users.push({name:'Mudassir Hassan', email:'mudassir.hassan123@mtnagent.com', password:'kotorkoshi@2026', createdAt:new Date().toLocaleString()});
-  localStorage.setItem('mtn_users', JSON.stringify(users));
+let currentUser = localStorage.getItem('mtn_current_user');
+let agents = [];
+let editingIndex = -1;
+let viewingIndex = -1;
+let photoBase64 = "";
+document.getElementById('aPhoto').addEventListener('change', function(e){
+ let file = e.target.files[0];
+ if(!file) return;
+ let reader = new FileReader();
+ reader.onload = function(ev){
+   photoBase64 = ev.target.result;
+   let p = document.getElementById('preview');
+   p.src = photoBase64;
+   p.style.display='block';
+ }
+ reader.readAsDataURL(file);
+});
+function showLogin(){ hideAll(); document.getElementById('loginPage').classList.remove('hidden'); }
+function showRegister(){ hideAll(); document.getElementById('registerPage').classList.remove('hidden'); }
+function showForgot(){ hideAll(); document.getElementById('forgotPage').classList.remove('hidden'); }
+function hideAll(){
+ document.getElementById('loginPage').classList.add('hidden');
+ document.getElementById('registerPage').classList.add('hidden');
+ document.getElementById('forgotPage').classList.add('hidden');
+ document.getElementById('appPage').classList.add('hidden');
 }
-// START EMPTY - Only what you write will appear
-let sims = JSON.parse(localStorage.getItem('mtn_sims_final')||'[]');
-
-function saveAll(){ localStorage.setItem('mtn_users', JSON.stringify(users)); localStorage.setItem('mtn_sims_final', JSON.stringify(sims)); }
-function switchTab(t){ document.getElementById('loginTab').classList.toggle('active',t==='login'); document.getElementById('registerTab').classList.toggle('active',t==='register'); document.getElementById('loginForm').style.display=t==='login'?'block':'none'; document.getElementById('registerForm').style.display=t==='register'?'block':'none'; }
-function showMsg(id,txt,err=true){ const el=document.getElementById(id); el.innerText=txt; el.className='msg '+(err?'error':'success'); el.style.display='block'; setTimeout(()=>el.style.display='none',4000); }
-
-function handleRegister(){
-  const name=document.getElementById('regName').value.trim(), email=document.getElementById('regEmail').value.trim().toLowerCase(), p=document.getElementById('regPass').value, p2=document.getElementById('regPass2').value;
-  if(!name||!email||!p){ showMsg('regMsg','Please fill all fields!'); return; }
-  if(!email.includes('@')){ showMsg('regMsg','Invalid email address!'); return; }
-  if(p.length<6){ showMsg('regMsg','Password must be at least 6 characters!'); return; }
-  if(p!==p2){ showMsg('regMsg','Confirm password does not match!'); return; }
-  if(users.find(u=>u.email===email)){ showMsg('regMsg','This email is already registered!'); return; }
-  users.push({name,email,password:p,createdAt:new Date().toLocaleString()}); saveAll();
-  document.getElementById('successOverlay').style.display='flex';
-  document.getElementById('progress').style.width='0%';
-  setTimeout(()=>{ document.getElementById('progress').style.width='100%'; },100);
-  setTimeout(()=>{
-    document.getElementById('successOverlay').style.display='none';
-    switchTab('login');
-    document.getElementById('loginEmail').value=email;
-    document.getElementById('loginPass').value='';
-    document.getElementById('regName').value=''; document.getElementById('regEmail').value=''; document.getElementById('regPass').value=''; document.getElementById('regPass2').value='';
-    showMsg('loginMsg','Registration Successful! Please login now.',false);
-  },2200);
+function showApp(){
+ hideAll();
+ document.getElementById('appPage').classList.remove('hidden');
+ document.getElementById('userBadge').innerText = currentUser;
+ loadAgents();
 }
-function handleLogin(){
-  const email=document.getElementById('loginEmail').value.trim().toLowerCase(), pass=document.getElementById('loginPass').value;
-  const user=users.find(u=>u.email===email);
-  if(!user){ showMsg('loginMsg','User not found! Please create an account first.'); return; }
-  if(user.password!==pass){ showMsg('loginMsg','❌ Wrong Password! Please try again.'); return; }
-  localStorage.setItem('mtn_current', JSON.stringify(user)); openDash(user);
+function getUsers(){ return JSON.parse(localStorage.getItem('mtn_users')||'{}'); }
+function saveUsers(u){ localStorage.setItem('mtn_users', JSON.stringify(u)); }
+function register(){
+ let email = document.getElementById('regEmail').value.trim().toLowerCase();
+ let p1 = document.getElementById('regPass').value;
+ let p2 = document.getElementById('regPass2').value;
+ if(!email ||!p1){ alert('Please fill Email and Password'); return; }
+ if(p1.length<4){ alert('Password too short, minimum 4 characters'); return; }
+ if(p1!==p2){ alert('Passwords do not match'); return; }
+ let users = getUsers();
+ if(users[email]){ alert('This Email is already registered!'); return; }
+ users[email]=p1;
+ saveUsers(users);
+ alert('Registration successful! Now login');
+ showLogin();
+ document.getElementById('loginEmail').value=email;
 }
-function openForgot(){ document.getElementById('forgotModal').style.display='flex'; }
-function closeForgot(){ document.getElementById('forgotModal').style.display='none'; }
-function handleForgot(){
-  const email=document.getElementById('forgotEmail').value.trim().toLowerCase(), np=document.getElementById('forgotNewPass').value;
-  const user=users.find(u=>u.email===email);
-  if(!user){ showMsg('forgotMsg','Email not found!'); return; }
-  if(np.length<6){ showMsg('forgotMsg','New password too short!'); return; }
-  user.password=np; saveAll(); showMsg('forgotMsg','Password reset successful! Login now.',false);
-  setTimeout(()=>{ closeForgot(); switchTab('login'); document.getElementById('loginEmail').value=email; document.getElementById('loginPass').value=np; },1300);
+function login(){
+ let email = document.getElementById('loginEmail').value.trim().toLowerCase();
+ let pass = document.getElementById('loginPass').value;
+ let users = getUsers();
+ if(!users[email]){ alert('Email not found, please register first'); return; }
+ if(users[email]!==pass){ alert('Wrong Password!'); return; }
+ localStorage.setItem('mtn_current_user', email);
+ currentUser = email;
+ showApp();
 }
-function openDash(user){
-  document.getElementById('authScreen').style.display='none'; document.getElementById('dashboardScreen').style.display='block';
-  document.getElementById('welcomeName').innerText=user.name; document.getElementById('sideName').innerText=user.name;
-  document.getElementById('sideEmail').innerText=user.email; document.getElementById('logoutName').innerText=user.name.split(' ')[0];
-  document.getElementById('loggedEmail').innerText=user.email;
-  renderSims(); setInterval(()=>{ document.getElementById('liveTime').innerText=new Date().toLocaleString(); },1000);
+function forgot(){
+ let email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+ let users = getUsers();
+ if(!users[email]){ alert('Email not found'); return; }
+ alert('Your password is: ' + users[email]);
+ showLogin();
+ document.getElementById('loginEmail').value=email;
+ document.getElementById('loginPass').value=users[email];
 }
-function renderSims(list=sims){
-  const tb=document.getElementById('simTbody'); tb.innerHTML=''; let total=0; list.forEach(s=>total+=parseInt(s.count)||0);
-  if(list.length===0){
-    document.getElementById('emptyMsg').style.display='block';
-  } else {
-    document.getElementById('emptyMsg').style.display='none';
-    list.forEach((s,index)=>{
-      tb.innerHTML+=`<tr><td><b>${s.serial}</b></td><td style="font-weight:900;color:var(--blue);">${s.count} SIM</td><td>${s.time}</td><td><span class="badge ${s.status}-bg">${s.status.toUpperCase()}</span></td><td><button class="deleteBtn" onclick="deleteSim(${index})">Delete</button></td></tr>`;
-    });
-  }
-  document.getElementById('totalSimCount').innerText=total; document.getElementById('todayCount').innerText=list.length;
-  document.getElementById('pendingCount').innerText=list.filter(x=>x.status==='pending').length; document.getElementById('deviceCount').innerText=list.length;
-  document.getElementById('sumSim').innerText=total; document.getElementById('sumDev').innerText=list.length;
-  document.getElementById('workBar').style.width=Math.min(100, total*3)+'%';
-  document.getElementById('successBar').style.width= list.length>0? Math.round((list.filter(x=>x.status==='success').length/list.length)*100)+'%' : '0%';
+function logout(){
+ localStorage.removeItem('mtn_current_user');
+ currentUser=null;
+ showLogin();
 }
-function addSim(){
-  let serial=prompt('Enter Device Serial Number (e.g., MTN-090788-004):','MTN-090788-00'+(sims.length+1)); if(!serial) return;
-  let count=prompt('How many SIMs registered with this device? (e.g., 1, 5, 10):','1'); if(!count) return;
-  count=parseInt(count); if(isNaN(count)){ alert('Please enter a valid number!'); return; }
-  let status=prompt('Status (success/pending/failed):','success')||'success';
-  sims.unshift({serial:serial.toUpperCase(), count:count, time:new Date().toLocaleTimeString(), status:status.toLowerCase()}); saveAll(); renderSims();
+function loadAgents(){
+ let key='mtn_agents_'+currentUser;
+ agents = JSON.parse(localStorage.getItem(key)||'[]');
+ renderAgents();
 }
-function deleteSim(index){
-  if(confirm('Are you sure you want to delete this entry? \nSerial: '+sims[index].serial)){
-    sims.splice(index,1); saveAll(); renderSims();
-  }
+function saveAgentsStorage(){
+ let key='mtn_agents_'+currentUser;
+ localStorage.setItem(key, JSON.stringify(agents));
 }
-function clearAll(){
-  if(confirm('Delete ALL your work data? This cannot be undone!')){
-    sims=[]; saveAll(); renderSims();
-  }
+function saveAgent(){
+ let name = document.getElementById('aName').value.trim();
+ let phone = document.getElementById('aPhone').value.trim();
+ let nin = document.getElementById('aNIN').value.trim();
+ let bvn = document.getElementById('aBVN').value.trim();
+ let addr = document.getElementById('aAddress').value.trim();
+ if(!name){ alert('Enter Agent Name'); return; }
+ if(!phone){ alert('Enter Phone Number'); return; }
+ let obj = {name, phone, nin, bvn, address:addr, photo:photoBase64 || 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png', date: new Date().toLocaleDateString()};
+ if(editingIndex>-1){
+   if(!photoBase64) obj.photo = agents[editingIndex].photo;
+   agents[editingIndex]=obj;
+   editingIndex=-1;
+   document.getElementById('formTitle').innerText='Add New Agent';
+   document.getElementById('cancelEdit').classList.add('hidden');
+ } else {
+   agents.unshift(obj);
+ }
+ saveAgentsStorage();
+ clearForm();
+ renderAgents();
+ alert('Agent Saved Successfully!');
 }
-function filterSim(type){ if(type==='all') renderSims(sims); else renderSims(sims.filter(s=>s.status===type)); }
-function exportReport(){ let total=0; sims.forEach(s=>total+=parseInt(s.count)); if(sims.length===0){ alert('No data to export yet!'); return; } alert('MTN KOTORKOSHI REPORT\n\nTotal SIM Registered: '+total+'\nTotal Devices Used: '+sims.length+'\nPending KYC: '+sims.filter(s=>s.status==='pending').length); }
-function handleLogout(){ localStorage.removeItem('mtn_current'); location.reload(); }
-function handleLogoutToCreate(){ localStorage.removeItem('mtn_current'); document.getElementById('dashboardScreen').style.display='none'; document.getElementById('authScreen').style.display='flex'; switchTab('register'); }
-const cur=JSON.parse(localStorage.getItem('mtn_current')||'null'); if(cur) openDash(cur);
+function clearForm(){
+ document.getElementById('aName').value='';
+ document.getElementById('aPhone').value='';
+ document.getElementById('aNIN').value='';
+ document.getElementById('aBVN').value='';
+ document.getElementById('aAddress').value='';
+ document.getElementById('aPhoto').value='';
+ document.getElementById('preview').style.display='none';
+ photoBase64='';
+}
+function cancelEdit(){
+ editingIndex=-1;
+ clearForm();
+ document.getElementById('formTitle').innerText='Add New Agent';
+ document.getElementById('cancelEdit').classList.add('hidden');
+}
+function renderAgents(){
+ let list = document.getElementById('agentList');
+ let q = document.getElementById('search').value.toLowerCase();
+ list.innerHTML='';
+ let filtered = agents.filter((a,i)=>{
+   a._idx=i;
+   return (a.name.toLowerCase().includes(q) || a.phone.includes(q) || a.nin.includes(q) || a.bvn.includes(q));
+ });
+ if(filtered.length==0 && agents.length==0){
+   document.getElementById('noAgent').classList.remove('hidden');
+ } else {
+   document.getElementById('noAgent').classList.add('hidden');
+ }
+ filtered.forEach(a=>{
+   let div=document.createElement('div');
+   div.className='agent-card';
+   div.innerHTML=`<img src="${a.photo}"><div class="agent-info"><b>${a.name}</b><small>📞 ${a.phone}</small><small>🆔 NIN: ${a.nin||'-'}</small></div><span style="font-size:20px">👁️</span>`;
+   div.onclick=()=>openDetail(a._idx);
+   list.appendChild(div);
+ });
+}
+function openDetail(idx){
+ viewingIndex=idx;
+ let a=agents[idx];
+ document.getElementById('dPhoto').src=a.photo;
+ document.getElementById('dName').innerText=a.name;
+ document.getElementById('dPhone').innerText=a.phone;
+ document.getElementById('dNIN').innerText=a.nin||'-';
+ document.getElementById('dBVN').innerText=a.bvn||'-';
+ document.getElementById('dAddress').innerText=a.address||'-';
+ document.getElementById('detailModal').classList.remove('hidden');
+}
+function closeModal(){ document.getElementById('detailModal').classList.add('hidden'); viewingIndex=-1; }
+function deleteCurrent(){
+ if(viewingIndex<0) return;
+ if(confirm('Are you sure you want to delete '+agents[viewingIndex].name+'?')){
+   agents.splice(viewingIndex,1);
+   saveAgentsStorage();
+   closeModal();
+   renderAgents();
+ }
+}
+if(currentUser){ showApp(); } else { showLogin(); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
 </script>
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}</script>
 </body>
 </html>
