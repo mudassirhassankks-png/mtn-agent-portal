@@ -8,126 +8,149 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 body{background:#f4f4f4}
-.header{background:#FFCC00;padding:18px;text-align:center;position:sticky;top:0;z-index:10}
-.header h1{font-size:22px;font-weight:900;letter-spacing:1px}
-.header p{font-size:13px;margin-top:3px}
+.header{background:#FFCC00;padding:15px;text-align:center;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.header h1{font-size:20px;font-weight:900}
 .container{max-width:480px;margin:0 auto;padding:15px}
 .card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:14px}
 input,textarea{width:100%;padding:12px;border:2px solid #eee;border-radius:10px;margin:6px 0;font-size:15px}
-input:focus,textarea:focus{border-color:#FFCC00;outline:none}
+input:focus{border-color:#FFCC00;outline:none}
 .btn{width:100%;padding:13px;background:#000;color:#FFCC00;border:none;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer;margin-top:8px}
 .btn-yellow{background:#FFCC00;color:#000}
 .btn-red{background:#ff3b30;color:#fff}
 .btn-grey{background:#eee;color:#000}
 .agent{display:flex;gap:12px;background:#fff;border-radius:12px;padding:12px;margin:10px 0;align-items:center;box-shadow:0 2px 6px rgba(0,0,0,.06)}
 .agent img{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #FFCC00}
-.agent b{font-size:15px;display:block}
-.agent small{color:#666;font-size:12px}
-.actions{display:flex;gap:6px;margin-top:6px}
-.actions button{padding:6px 10px;border-radius:6px;border:none;font-size:12px;font-weight:bold;cursor:pointer}
+.actions{margin-top:6px;display:flex;gap:6px}
+.actions button{padding:6px 12px;border-radius:6px;border:none;font-size:12px;font-weight:bold;cursor:pointer}
 .view{background:#FFCC00}
 .del{background:#ff3b30;color:#fff}
-.detail{background:#fffbe6;border:2px dashed #FFCC00;border-radius:10px;padding:12px;margin-top:8px}
-.detail p{margin:4px 0;font-size:14px}
-.search{position:sticky;top:74px;z-index:9;background:#f4f4f4;padding:8px 0}
+.detail{background:#fffbe6;border:2px dashed #FFCC00;border-radius:10px;padding:10px;margin-top:8px}
 .hidden{display:none}
+.link{color:#0066cc;text-align:center;display:block;margin:10px 0;cursor:pointer;text-decoration:underline;font-size:14px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.badge{background:#000;color:#FFCC00;padding:5px 12px;border-radius:20px;font-size:12px}
 </style>
 </head>
 <body>
-<div class="header">
-<h1>MTN</h1>
-<p>Agent Database System</p>
-</div>
+<div class="header"><h1>MTN Agent Database</h1></div>
 <div class="container">
+
+<div id="loginPage" class="card">
+<h3 style="text-align:center">Login</h3>
+<input id="loginEmail" type="email" placeholder="Email">
+<input id="loginPass" type="password" placeholder="Password">
+<button class="btn" onclick="login()">LOGIN</button>
+<span class="link" onclick="showPage('forgotPage')">Forgot Password?</span>
+<span class="link" onclick="showPage('registerPage')">Add Account / Register</span>
+</div>
+
+<div id="registerPage" class="card hidden">
+<h3 style="text-align:center">Add New Account / Register</h3>
+<input id="regEmail" type="email" placeholder="Email">
+<input id="regPass" type="password" placeholder="Password">
+<input id="regPass2" type="password" placeholder="Confirm Password">
+<button class="btn" onclick="register()">CREATE ACCOUNT</button>
+<span class="link" onclick="showPage('loginPage')">Already have account? Login</span>
+</div>
+
+<div id="forgotPage" class="card hidden">
+<h3 style="text-align:center">Forgot Password</h3>
+<input id="forgotEmail" type="email" placeholder="Enter your Email">
+<button class="btn" onclick="forgot()">SHOW PASSWORD</button>
+<span class="link" onclick="showPage('loginPage')">Back to Login</span>
+</div>
+
+<div id="appPage" class="hidden">
+<div class="topbar">
+<span class="badge" id="userBadge"></span>
+<button onclick="logout()" style="padding:6px 12px;border-radius:20px;border:1px solid #000;background:#fff;font-size:12px">Logout</button>
+</div>
+
 <div class="card">
 <h3>Add New Agent</h3>
-<input id="name" placeholder="Agent Full Name *">
-<input id="phone" placeholder="Phone Number *">
-<input id="nin" placeholder="NIN Number">
-<input id="bvn" placeholder="BVN Number">
+<input id="name" placeholder="Agent Name *">
+<input id="phone" placeholder="Phone *">
+<input id="nin" placeholder="NIN">
+<input id="bvn" placeholder="BVN">
 <textarea id="addr" placeholder="Address" rows="2"></textarea>
-<label style="font-size:12px;margin-top:6px;display:block">Agent Photo:</label>
+<label style="font-size:12px">Photo:</label>
 <input id="photo" type="file" accept="image/*">
-<img id="preview" style="width:70px;height:70px;border-radius:50%;margin-top:8px;display:none;object-fit:cover;border:2px solid #FFCC00">
+<img id="preview" style="width:70px;height:70px;border-radius:50%;display:none;margin-top:8px;object-fit:cover;border:2px solid #FFCC00">
 <button class="btn btn-yellow" onclick="saveAgent()">SAVE AGENT</button>
 </div>
-<div class="search">
-<input id="search" placeholder="🔍 Search by name, phone, NIN..." oninput="showAgents()">
-</div>
+
+<div class="card" style="padding:10px"><input id="search" placeholder="🔍 Search agent..." oninput="showAgents()"></div>
 <div id="list"></div>
-<div id="empty" style="text-align:center;color:#999;padding:30px">No agents yet.<br>Add your first agent above.</div>
+<div id="empty" style="text-align:center;color:#999;padding:20px" class="hidden">No agents yet</div>
+</div>
+
 </div>
 <script>
-let agents = JSON.parse(localStorage.getItem('mtn_agents')||'[]');
-let photoData = '';
-let openId = -1;
+let currentUser = localStorage.getItem('mtn_user');
+let agents = [];
+let photoData=''; let openId=-1;
+
+function showPage(id){
+ ['loginPage','registerPage','forgotPage','appPage'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+}
+function getUsers(){return JSON.parse(localStorage.getItem('mtn_users')||'{}')}
+function saveUsers(u){localStorage.setItem('mtn_users', JSON.stringify(u))}
+
+function register(){
+ let e=document.getElementById('regEmail').value.trim().toLowerCase();
+ let p1=document.getElementById('regPass').value;
+ let p2=document.getElementById('regPass2').value;
+ if(!e||!p1){alert('Fill Email and Password');return}
+ if(p1!==p2){alert('Passwords not match');return}
+ let u=getUsers(); if(u[e]){alert('Account already exists');return}
+ u[e]=p1; saveUsers(u); alert('Account Created! Login now'); showPage('loginPage');
+}
+function login(){
+ let e=document.getElementById('loginEmail').value.trim().toLowerCase();
+ let p=document.getElementById('loginPass').value;
+ let u=getUsers(); if(!u[e]){alert('Account not found. Please Add Account');return}
+ if(u[e]!==p){alert('Wrong password');return}
+ localStorage.setItem('mtn_user', e); currentUser=e; loadApp();
+}
+function forgot(){
+ let e=document.getElementById('forgotEmail').value.trim().toLowerCase();
+ let u=getUsers(); if(!u[e]){alert('Email not found');return}
+ alert('Your password is: '+u[e]); showPage('loginPage');
+}
+function logout(){localStorage.removeItem('mtn_user'); currentUser=null; showPage('loginPage');}
+function loadApp(){
+ document.getElementById('userBadge').innerText=currentUser;
+ agents=JSON.parse(localStorage.getItem('mtn_agents_'+currentUser)||'[]');
+ showPage('appPage'); showAgents();
+}
 document.getElementById('photo').addEventListener('change', e=>{
  let f=e.target.files[0]; if(!f) return;
- let r=new FileReader(); r.onload=ev=>{
-  photoData=ev.target.result;
-  let p=document.getElementById('preview'); p.src=photoData; p.style.display='block';
- }; r.readAsDataURL(f);
+ let r=new FileReader(); r.onload=ev=>{photoData=ev.target.result; let pr=document.getElementById('preview'); pr.src=photoData; pr.style.display='block';}; r.readAsDataURL(f);
 });
 function saveAgent(){
- let n=document.getElementById('name').value.trim();
- let ph=document.getElementById('phone').value.trim();
- let nin=document.getElementById('nin').value.trim();
- let bvn=document.getElementById('bvn').value.trim();
- let addr=document.getElementById('addr').value.trim();
- if(!n){alert('Enter Agent Name'); return}
- if(!ph){alert('Enter Phone Number'); return}
+ let n=document.getElementById('name').value.trim(); let ph=document.getElementById('phone').value.trim();
+ let nin=document.getElementById('nin').value.trim(); let bvn=document.getElementById('bvn').value.trim(); let addr=document.getElementById('addr').value.trim();
+ if(!n||!ph){alert('Enter Name and Phone');return}
  let obj={id:Date.now(),name:n,phone:ph,nin,bvn,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};
- agents.unshift(obj);
- localStorage.setItem('mtn_agents', JSON.stringify(agents));
- clearForm(); showAgents();
- alert('Agent Saved!');
-}
-function clearForm(){
- ['name','phone','nin','bvn','addr'].forEach(id=>document.getElementById(id).value='');
- document.getElementById('photo').value=''; document.getElementById('preview').style.display='none'; photoData='';
+ agents.unshift(obj); localStorage.setItem('mtn_agents_'+currentUser, JSON.stringify(agents));
+ ['name','phone','nin','bvn','addr'].forEach(id=>document.getElementById(id).value=''); document.getElementById('photo').value=''; document.getElementById('preview').style.display='none'; photoData=''; showAgents();
 }
 function showAgents(){
- let q=document.getElementById('search').value.toLowerCase();
- let list=document.getElementById('list'); list.innerHTML='';
- let filtered=agents.filter(a=> a.name.toLowerCase().includes(q) || a.phone.includes(q) || a.nin.toLowerCase().includes(q));
- document.getElementById('empty').style.display = agents.length==0? 'block' : 'none';
- filtered.forEach((a,i)=>{
-  let realIndex = agents.findIndex(x=>x.id==a.id);
-  let div=document.createElement('div'); div.className='agent';
-  div.innerHTML=`
-   <img src="${a.photo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
-   <div style="flex:1">
-     <b>${a.name}</b>
-     <small>📞 ${a.phone}</small>
-     <small>🆔 NIN: ${a.nin||'-'}</small>
-     <div class="actions">
-       <button class="view" onclick="toggleDetail(${realIndex})">${openId==realIndex?'HIDE':'VIEW'}</button>
-       <button class="del" onclick="delAgent(${realIndex})">DELETE</button>
-     </div>
-     <div id="det-${realIndex}" class="${openId==realIndex?'detail':'hidden'}">
-       <p><b>Phone:</b> ${a.phone}</p>
-       <p><b>NIN:</b> ${a.nin||'-'}</p>
-       <p><b>BVN:</b> ${a.bvn||'-'}</p>
-       <p><b>Address:</b> ${a.addr||'-'}</p>
-       <button class="btn btn-grey" style="padding:8px;margin-top:8px" onclick="toggleDetail(${realIndex})">CLOSE</button>
-     </div>
-   </div>`;
-  list.appendChild(div);
+ let q=document.getElementById('search').value.toLowerCase(); let list=document.getElementById('list'); list.innerHTML='';
+ let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q));
+ document.getElementById('empty').classList.toggle('hidden', agents.length!=0);
+ filtered.forEach(a=>{
+  let idx=agents.findIndex(x=>x.id==a.id);
+  let d=document.createElement('div'); d.className='agent';
+  d.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b><br><small>📞 ${a.phone}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div id="det-${idx}" class="${openId==idx?'detail':'hidden'}"><p><b>Phone:</b> ${a.phone}</p><p><b>NIN:</b> ${a.nin||'-'}</p><p><b>BVN:</b> ${a.bvn||'-'}</p><p><b>Address:</b> ${a.addr||'-'}</p><button class="btn btn-grey" style="padding:8px;margin-top:6px" onclick="toggle(${idx})">CLOSE</button></div></div>`;
+  list.appendChild(d);
  });
 }
-function toggleDetail(idx){
- if(openId==idx) openId=-1; else openId=idx;
- showAgents();
-}
-function delAgent(idx){
- if(confirm('Delete '+agents[idx].name+'?')){
-  agents.splice(idx,1);
-  localStorage.setItem('mtn_agents', JSON.stringify(agents));
-  if(openId==idx) openId=-1;
-  showAgents();
- }
-}
-showAgents();
+function toggle(i){ openId=openId==i?-1:i; showAgents(); }
+function delAg(i){ if(confirm('Delete '+agents[i].name+'?')){ agents.splice(i,1); localStorage.setItem('mtn_agents_'+currentUser, JSON.stringify(agents)); if(openId==i)openId=-1; showAgents(); } }
+
+if(currentUser) loadApp(); else showPage('loginPage');
 </script>
 </body>
 </html>
