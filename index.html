@@ -15,7 +15,7 @@ body{background:#f4f4f4}
 .card{background:#fff;color:#000;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.1);margin-bottom:14px}
 input,textarea{width:100%;padding:12px;border:2px solid #eee;border-radius:10px;margin:6px 0;font-size:15px}
 input:focus{border-color:#FFCC00;outline:none}
-.btn{width:100%;padding:13px;background:#000;color:#FFCC00;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:8px}
+.btn{width:100%;padding:13px;background:#000;color:#FFCC00;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
 .btn-yellow{background:#FFCC00;color:#000}
 .hidden{display:none!important}
 .lock-screen{position:fixed;inset:0;background:#0a0a0a;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -28,11 +28,13 @@ input:focus{border-color:#FFCC00;outline:none}
 .detail{background:#fffbe6;border:2px dashed #FFCC00;border-radius:10px;padding:10px;margin-top:8px}
 .badge{background:#000;color:#FFCC00;padding:5px 12px;border-radius:20px;font-size:12px}
 .shake{animation:shake.3s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.call-btn{background:#00cc00;color:#fff}
+.wa-btn{background:#25D366;color:#fff}
 </style>
 </head>
 <body>
 
-<!-- SECURE LOCK SCREEN - NO BYPASS -->
+<!-- SECURE LOCK SCREEN WITH YOUR NUMBER -->
 <div id="lockScreen" class="lock-screen">
 <div id="lockBox" class="lock-box">
 <div style="font-size:50px">🔒</div>
@@ -41,7 +43,14 @@ input:focus{border-color:#FFCC00;outline:none}
 <div id="lockAlert" class="hidden" style="padding:10px;border-radius:8px;margin:10px 0;font-weight:bold;font-size:13px"></div>
 <input id="licenseInput" placeholder="ENTER ACTIVATION CODE" style="text-transform:uppercase;text-align:center;font-weight:bold;letter-spacing:1px">
 <button class="btn btn-yellow" onclick="activate()">UNLOCK APP 🔓</button>
-<p style="font-size:10px;color:#999;margin-top:12px">One license = One device<br>Contact Admin to purchase code</p>
+
+<!-- YOUR CONTACT BUTTONS -->
+<div style="margin-top:15px;padding-top:15px;border-top:2px dashed #eee">
+<p style="font-size:11px;color:#888;margin-bottom:8px">One license = One device<br>Contact Admin to purchase code:</p>
+<a href="tel:09117675227" class="btn call-btn">📞 CALL ADMIN: 09117675227</a>
+<a href="https://wa.me/2349117675227?text=Hello%20Admin,%20I%20want%20to%20buy%20MTN%20Agent%20App%20License%20N2000" class="btn wa-btn">💬 WHATSAPP ADMIN</a>
+</div>
+
 <p id="attemptInfo" style="font-size:10px;color:#999;margin-top:8px"></p>
 </div>
 </div>
@@ -78,12 +87,10 @@ input:focus{border-color:#FFCC00;outline:none}
 <div id="empty" style="text-align:center;color:#999;padding:30px">
 <p style="font-size:35px">📂</p>
 <p>No agents found</p>
-<p style="font-size:11px">Add your first agent above</p>
 </div>
 </div>
 
 <script>
-// ==================== LICENSE KEYS - ONLY THESE KEYS WILL WORK ====================
 const VALID_LICENSE_KEYS = [
 "MTN-2026-1001","MTN-2026-1002","MTN-2026-1003","MTN-2026-1004","MTN-2026-1005",
 "MTN-2026-1006","MTN-2026-1007","MTN-2026-1008","MTN-2026-1009","MTN-2026-1010",
@@ -93,21 +100,14 @@ const VALID_LICENSE_KEYS = [
 "MTN-2026-1026","MTN-2026-1027","MTN-2026-1028","MTN-2026-1029","MTN-2026-1030",
 "MTN-2026-1031","MTN-2026-1032","MTN-2026-1033","MTN-2026-1034","MTN-2026-1035",
 "MTN-2026-1036","MTN-2026-1037","MTN-2026-1038","MTN-2026-1039","MTN-2026-1040",
-"MTN-ADMIN-2026" // Master Admin Key - Keep private
+"MTN-ADMIN-2026"
 ];
-// ==============================================================================
 
 let agents = JSON.parse(localStorage.getItem('mtn_agents_secure_en')||'[]');
 let photoData='', openId=-1;
 let attempts = parseInt(localStorage.getItem('mtn_login_attempts')||'0');
-
-// CHECK IF ALREADY UNLOCKED
 let isUnlocked = localStorage.getItem('mtn_is_unlocked')==='yes';
-if(isUnlocked){
- document.getElementById('lockScreen').style.display='none';
-} else {
- document.getElementById('lockScreen').style.display='flex';
-}
+if(isUnlocked){document.getElementById('lockScreen').style.display='none';}else{document.getElementById('lockScreen').style.display='flex';}
 if(attempts>0){document.getElementById('attemptInfo').innerText=`Failed attempts: ${attempts}`;}
 
 function activate(){
@@ -115,85 +115,28 @@ function activate(){
  let code=inputEl.value.trim().toUpperCase();
  let alertBox=document.getElementById('lockAlert');
  let box=document.getElementById('lockBox');
-
  if(!VALID_LICENSE_KEYS.includes(code)){
-  attempts++;
-  localStorage.setItem('mtn_login_attempts',attempts);
-  alertBox.innerText='❌ INVALID CODE! Please buy a valid license for N2,000';
-  alertBox.style.background='#f8d7da'; alertBox.style.color='#721c24';
+  attempts++;localStorage.setItem('mtn_login_attempts',attempts);
+  alertBox.innerText='❌ INVALID CODE! Call Admin 09117675227';
+  alertBox.style.background='#f8d7da';alertBox.style.color='#721c24';
   alertBox.classList.remove('hidden');
-  box.classList.add('shake'); setTimeout(()=>box.classList.remove('shake'),300);
-  inputEl.value='';
-  document.getElementById('attemptInfo').innerText=`Failed attempts: ${attempts}`;
-  return;
+  box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300);
+  inputEl.value='';document.getElementById('attemptInfo').innerText=`Failed attempts: ${attempts}`;return;
  }
-
- // VALID CODE - UNLOCK
  localStorage.setItem('mtn_is_unlocked','yes');
  localStorage.setItem('mtn_active_license',code);
- alertBox.innerText='✅ LICENSE VALID! Opening application...';
- alertBox.style.background='#d4edda'; alertBox.style.color='#155724';
+ alertBox.innerText='✅ LICENSE VALID! Opening...';
+ alertBox.style.background='#d4edda';alertBox.style.color='#155724';
  alertBox.classList.remove('hidden');
- setTimeout(()=>{
-  document.getElementById('lockScreen').style.display='none';
-  showAgents();
- },800);
+ setTimeout(()=>{document.getElementById('lockScreen').style.display='none';showAgents();},800);
 }
-
-function lockNow(){
- if(confirm('Are you sure you want to lock the app? You will need activation code to unlock again.')){
-  localStorage.removeItem('mtn_is_unlocked');
-  location.reload();
- }
-}
-
-// AGENT MANAGEMENT
-document.getElementById('photo').addEventListener('change',e=>{
- let f=e.target.files[0]; if(!f) return;
- let r=new FileReader();
- r.onload=ev=>{photoData=ev.target.result; let pr=document.getElementById('preview'); pr.src=photoData; pr.style.display='block';};
- r.readAsDataURL(f);
-});
-
-function saveAgent(){
- let n=document.getElementById('name').value.trim();
- let ph=document.getElementById('phone').value.trim();
- let nin=document.getElementById('nin').value.trim();
- let bvn=document.getElementById('bvn').value.trim();
- let addr=document.getElementById('addr').value.trim();
- if(!n||!ph){alert('Please enter Agent Name and Phone Number'); return;}
- let obj={id:Date.now(),name:n,phone:ph,nin,bvn,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};
- agents.unshift(obj);
- localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));
- ['name','phone','nin','bvn','addr'].forEach(id=>document.getElementById(id).value='');
- document.getElementById('photo').value=''; document.getElementById('preview').style.display='none'; photoData='';
- showAgents();
-}
-
-function showAgents(){
- let q=document.getElementById('search').value.toLowerCase();
- let list=document.getElementById('list'); list.innerHTML='';
- let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q));
- document.getElementById('empty').style.display=agents.length==0?'block':'none';
- document.getElementById('totalCount').innerText=agents.length;
- document.getElementById('countBadge').innerText=agents.length+' Agents';
- filtered.forEach(a=>{
-  let idx=agents.findIndex(x=>x.id==a.id);
-  let div=document.createElement('div'); div.className='agent';
-  div.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b><br><small>📞 ${a.phone}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div class="${openId==idx?'detail':'hidden'}"><p><b>Phone:</b> ${a.phone}</p><p><b>NIN:</b> ${a.nin||'-'}</p><p><b>BVN:</b> ${a.bvn||'-'}</p><p><b>Address:</b> ${a.addr||'-'}</p></div></div>`;
-  list.appendChild(div);
- });
-}
-
-function toggle(i){openId=openId==i?-1:i; showAgents();}
-function delAg(i){if(confirm('Delete '+agents[i].name+'?')){agents.splice(i,1); localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents)); showAgents();}}
-function exportData(){
- if(agents.length==0){alert('No data to export'); return;}
- let csv="Name,Phone,NIN,BVN,Address\n"+agents.map(a=>`"${a.name}","${a.phone}","${a.nin}","${a.bvn}","${a.addr}"`).join("\n");
- let blob=new Blob([csv],{type:'text/csv'}); let url=URL.createObjectURL(blob);
- let a=document.createElement('a'); a.href=url; a.download='MTN_Agents_Database.csv'; a.click();
-}
-
+function lockNow(){if(confirm('Lock the app? You will need code again.')){localStorage.removeItem('mtn_is_unlocked');location.reload();}}
+document.getElementById('photo').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=ev=>{photoData=ev.target.result;let pr=document.getElementById('preview');pr.src=photoData;pr.style.display='block';};r.readAsDataURL(f);});
+function saveAgent(){let n=document.getElementById('name').value.trim();let ph=document.getElementById('phone').value.trim();let nin=document.getElementById('nin').value.trim();let bvn=document.getElementById('bvn').value.trim();let addr=document.getElementById('addr').value.trim();if(!n||!ph){alert('Please enter Agent Name and Phone Number');return;}let obj={id:Date.now(),name:n,phone:ph,nin,bvn,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};agents.unshift(obj);localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));['name','phone','nin','bvn','addr'].forEach(id=>document.getElementById(id).value='');document.getElementById('photo').value='';document.getElementById('preview').style.display='none';photoData='';showAgents();}
+function showAgents(){let q=document.getElementById('search').value.toLowerCase();let list=document.getElementById('list');list.innerHTML='';let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q));document.getElementById('empty').style.display=agents.length==0?'block':'none';document.getElementById('totalCount').innerText=agents.length;document.getElementById('countBadge').innerText=agents.length+' Agents';filtered.forEach(a=>{let idx=agents.findIndex(x=>x.id==a.id);let div=document.createElement('div');div.className='agent';div.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b><br><small>📞 ${a.phone}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div class="${openId==idx?'detail':'hidden'}"><p><b>Phone:</b> ${a.phone}</p><p><b>NIN:</b> ${a.nin||'-'}</p><p><b>BVN:</b> ${a.bvn||'-'}</p><p><b>Address:</b> ${a.addr||'-'}</p></div></div>`;list.appendChild(div);});}
+function toggle(i){openId=openId==i?-1:i;showAgents();}
+function delAg(i){if(confirm('Delete '+agents[i].name+'?')){agents.splice(i,1);localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));showAgents();}}
+function exportData(){if(agents.length==0){alert('No data to export');return;}let csv="Name,Phone,NIN,BVN,Address\n"+agents.map(a=>`"${a.name}","${a.phone}","${a.nin}","${a.bvn}","${a.addr}"`).join("\n");let blob=new Blob([csv],{type:'text/csv'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='MTN_Agents_Database.csv';a.click();}
 showAgents();
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
 </script>
