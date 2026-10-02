@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MTN Agent Database - SECURED PREMIUM</title>
 <meta name="theme-color" content="#FFCC00">
-<link rel="manifest" href="manifest.json">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 body{background:#f4f4f4}
@@ -13,8 +12,8 @@ body{background:#f4f4f4}
 .header h1{font-weight:900;font-size:18px}
 .container{max-width:480px;margin:0 auto;padding:15px}
 .card{background:#fff;color:#000;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.1);margin-bottom:14px}
-input,textarea{width:100%;padding:12px;border:2px solid #eee;border-radius:10px;margin:6px 0;font-size:15px}
-input:focus{border-color:#FFCC00;outline:none}
+input,textarea,select{width:100%;padding:12px;border:2px solid #eee;border-radius:10px;margin:6px 0;font-size:15px}
+input:focus,select:focus{border-color:#FFCC00;outline:none}
 .btn{width:100%;padding:13px;background:#000;color:#FFCC00;border:none;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
 .btn-yellow{background:#FFCC00;color:#000}
 .hidden{display:none!important}
@@ -22,19 +21,18 @@ input:focus{border-color:#FFCC00;outline:none}
 .lock-box{background:#fff;color:#000;padding:25px;border-radius:20px;width:100%;max-width:360px;text-align:center}
 .agent{display:flex;gap:12px;background:#fff;color:#000;border-radius:12px;padding:12px;margin:10px 0;align-items:center}
 .agent img{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #FFCC00}
-.actions{display:flex;gap:6px;margin-top:6px}
+.actions{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
 .actions button{padding:6px 12px;border-radius:6px;border:none;font-size:12px;font-weight:bold;cursor:pointer}
-.view{background:#FFCC00;color:#000}.del{background:#ff3b30;color:#fff}
+.view{background:#FFCC00;color:#000}.edit{background:#007bff;color:#fff}.del{background:#ff3b30;color:#fff}
 .detail{background:#fffbe6;border:2px dashed #FFCC00;border-radius:10px;padding:10px;margin-top:8px}
 .badge{background:#000;color:#FFCC00;padding:5px 12px;border-radius:20px;font-size:12px}
 .shake{animation:shake.3s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.call-btn{background:#00cc00;color:#fff}
-.wa-btn{background:#25D366;color:#fff}
+.call-btn{background:#00cc00;color:#fff}.wa-btn{background:#25D366;color:#fff}
+.total-box{background:#000;color:#FFCC00;padding:16px;border-radius:12px;text-align:center;display:flex;justify-content:space-between;align-items:center}
 </style>
 </head>
 <body>
 
-<!-- SECURE LOCK SCREEN WITH YOUR NUMBER -->
 <div id="lockScreen" class="lock-screen">
 <div id="lockBox" class="lock-box">
 <div style="font-size:50px">🔒</div>
@@ -43,14 +41,11 @@ input:focus{border-color:#FFCC00;outline:none}
 <div id="lockAlert" class="hidden" style="padding:10px;border-radius:8px;margin:10px 0;font-weight:bold;font-size:13px"></div>
 <input id="licenseInput" placeholder="ENTER ACTIVATION CODE" style="text-transform:uppercase;text-align:center;font-weight:bold;letter-spacing:1px">
 <button class="btn btn-yellow" onclick="activate()">UNLOCK APP 🔓</button>
-
-<!-- YOUR CONTACT BUTTONS -->
 <div style="margin-top:15px;padding-top:15px;border-top:2px dashed #eee">
-<p style="font-size:11px;color:#888;margin-bottom:8px">One license = One device<br>Contact Admin to purchase code:</p>
+<p style="font-size:11px;color:#888;margin-bottom:8px">Contact Admin to purchase code:</p>
 <a href="tel:09117675227" class="btn call-btn">📞 CALL ADMIN: 09117675227</a>
-<a href="https://wa.me/2349117675227?text=Hello%20Admin,%20I%20want%20to%20buy%20MTN%20Agent%20App%20License%20N2000" class="btn wa-btn">💬 WHATSAPP ADMIN</a>
+<a href="https://wa.me/2349117675227?text=Hello%20Admin,%20I%20want%20to%20buy%20MTN%20Agent%20App%20License" class="btn wa-btn">💬 WHATSAPP ADMIN</a>
 </div>
-
 <p id="attemptInfo" style="font-size:10px;color:#999;margin-top:8px"></p>
 </div>
 </div>
@@ -61,26 +56,37 @@ input:focus{border-color:#FFCC00;outline:none}
 </div>
 
 <div class="container">
-<div class="card" style="background:#000;color:#FFCC00;display:flex;justify-content:space-between;font-weight:bold">
-<span>Total Agents</span><span id="totalCount">0</span>
+
+<div class="total-box">
+<span style="font-weight:bold">Total Devices / Agents</span>
+<b id="totalCount" style="font-size:24px">0</b>
 </div>
 
 <div class="card">
-<h3>Add New Agent</h3>
+<h3 id="formTitle">Add New Agent</h3>
 <input id="name" placeholder="Agent Name *">
 <input id="phone" placeholder="Phone Number *">
-<input id="nin" placeholder="NIN (Optional)">
-<input id="bvn" placeholder="BVN (Optional)">
+<input id="deviceTag" placeholder="Device Tag * e.g MTN-POS-001">
+<input id="username" placeholder="Username * e.g agent.musa">
+<input id="kioskId" placeholder="Kiosk ID * e.g KIOSK-GS-102">
+<select id="deviceNo">
+<option value="">Select Device *</option>
+<option value="1">Device 1</option>
+<option value="2">Device 2</option>
+</select>
 <textarea id="addr" rows="2" placeholder="Address (Optional)"></textarea>
 <input id="photo" type="file" accept="image/*">
 <img id="preview" style="width:70px;height:70px;border-radius:50%;display:none;margin-top:8px;object-fit:cover;border:2px solid #FFCC00">
-<button class="btn btn-yellow" onclick="saveAgent()">💾 SAVE AGENT</button>
+
+<button id="saveBtn" class="btn btn-yellow" onclick="saveAgent()">💾 SAVE AGENT</button>
+<button id="cancelBtn" class="btn hidden" onclick="cancelEdit()" style="background:#666;color:#fff">❌ CANCEL EDIT</button>
+
 <button class="btn" onclick="exportData()" style="background:#222;color:#FFCC00">📤 EXPORT TO CSV</button>
 <button class="btn" onclick="lockNow()" style="background:#ff3b30;color:#fff;margin-top:12px">🔒 LOCK APP</button>
 </div>
 
 <div class="card" style="padding:10px">
-<input id="search" placeholder="🔍 Search by Name or Phone..." oninput="showAgents()">
+<input id="search" placeholder="🔍 Search by Name, Phone, Device Tag, Kiosk ID..." oninput="showAgents()">
 </div>
 
 <div id="list"></div>
@@ -91,54 +97,111 @@ input:focus{border-color:#FFCC00;outline:none}
 </div>
 
 <script>
-const VALID_LICENSE_KEYS = [
-"MTN-2026-1001","MTN-2026-1002","MTN-2026-1003","MTN-2026-1004","MTN-2026-1005",
-"MTN-2026-1006","MTN-2026-1007","MTN-2026-1008","MTN-2026-1009","MTN-2026-1010",
-"MTN-2026-1011","MTN-2026-1012","MTN-2026-1013","MTN-2026-1014","MTN-2026-1015",
-"MTN-2026-1016","MTN-2026-1017","MTN-2026-1018","MTN-2026-1019","MTN-2026-1020",
-"MTN-2026-1021","MTN-2026-1022","MTN-2026-1023","MTN-2026-1024","MTN-2026-1025",
-"MTN-2026-1026","MTN-2026-1027","MTN-2026-1028","MTN-2026-1029","MTN-2026-1030",
-"MTN-2026-1031","MTN-2026-1032","MTN-2026-1033","MTN-2026-1034","MTN-2026-1035",
-"MTN-2026-1036","MTN-2026-1037","MTN-2026-1038","MTN-2026-1039","MTN-2026-1040",
-"MTN-ADMIN-2026"
-];
+const VALID_LICENSE_KEYS = ["MTN-2026-1001","MTN-2026-1002","MTN-2026-1003","MTN-2026-1004","MTN-2026-1005","MTN-2026-1006","MTN-2026-1007","MTN-2026-1008","MTN-2026-1009","MTN-2026-1010","MTN-ADMIN-2026"];
 
 let agents = JSON.parse(localStorage.getItem('mtn_agents_secure_en')||'[]');
-let photoData='', openId=-1;
+let photoData='', openId=-1, editId=null;
 let attempts = parseInt(localStorage.getItem('mtn_login_attempts')||'0');
 let isUnlocked = localStorage.getItem('mtn_is_unlocked')==='yes';
 if(isUnlocked){document.getElementById('lockScreen').style.display='none';}else{document.getElementById('lockScreen').style.display='flex';}
-if(attempts>0){document.getElementById('attemptInfo').innerText=`Failed attempts: ${attempts}`;}
 
 function activate(){
- let inputEl=document.getElementById('licenseInput');
- let code=inputEl.value.trim().toUpperCase();
+ let code=document.getElementById('licenseInput').value.trim().toUpperCase();
  let alertBox=document.getElementById('lockAlert');
- let box=document.getElementById('lockBox');
  if(!VALID_LICENSE_KEYS.includes(code)){
-  attempts++;localStorage.setItem('mtn_login_attempts',attempts);
-  alertBox.innerText='❌ INVALID CODE! Call Admin 09117675227';
-  alertBox.style.background='#f8d7da';alertBox.style.color='#721c24';
-  alertBox.classList.remove('hidden');
-  box.classList.add('shake');setTimeout(()=>box.classList.remove('shake'),300);
-  inputEl.value='';document.getElementById('attemptInfo').innerText=`Failed attempts: ${attempts}`;return;
+  alertBox.innerText='❌ INVALID CODE! Call Admin 09117675227';alertBox.style.background='#f8d7da';alertBox.style.color='#721c24';alertBox.classList.remove('hidden');return;
  }
- localStorage.setItem('mtn_is_unlocked','yes');
- localStorage.setItem('mtn_active_license',code);
- alertBox.innerText='✅ LICENSE VALID! Opening...';
- alertBox.style.background='#d4edda';alertBox.style.color='#155724';
- alertBox.classList.remove('hidden');
- setTimeout(()=>{document.getElementById('lockScreen').style.display='none';showAgents();},800);
+ localStorage.setItem('mtn_is_unlocked','yes');document.getElementById('lockScreen').style.display='none';showAgents();
 }
-function lockNow(){if(confirm('Lock the app? You will need code again.')){localStorage.removeItem('mtn_is_unlocked');location.reload();}}
-document.getElementById('photo').addEventListener('change',e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=ev=>{photoData=ev.target.result;let pr=document.getElementById('preview');pr.src=photoData;pr.style.display='block';};r.readAsDataURL(f);});
-function saveAgent(){let n=document.getElementById('name').value.trim();let ph=document.getElementById('phone').value.trim();let nin=document.getElementById('nin').value.trim();let bvn=document.getElementById('bvn').value.trim();let addr=document.getElementById('addr').value.trim();if(!n||!ph){alert('Please enter Agent Name and Phone Number');return;}let obj={id:Date.now(),name:n,phone:ph,nin,bvn,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};agents.unshift(obj);localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));['name','phone','nin','bvn','addr'].forEach(id=>document.getElementById(id).value='');document.getElementById('photo').value='';document.getElementById('preview').style.display='none';photoData='';showAgents();}
-function showAgents(){let q=document.getElementById('search').value.toLowerCase();let list=document.getElementById('list');list.innerHTML='';let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q));document.getElementById('empty').style.display=agents.length==0?'block':'none';document.getElementById('totalCount').innerText=agents.length;document.getElementById('countBadge').innerText=agents.length+' Agents';filtered.forEach(a=>{let idx=agents.findIndex(x=>x.id==a.id);let div=document.createElement('div');div.className='agent';div.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b><br><small>📞 ${a.phone}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div class="${openId==idx?'detail':'hidden'}"><p><b>Phone:</b> ${a.phone}</p><p><b>NIN:</b> ${a.nin||'-'}</p><p><b>BVN:</b> ${a.bvn||'-'}</p><p><b>Address:</b> ${a.addr||'-'}</p></div></div>`;list.appendChild(div);});}
+function lockNow(){if(confirm('Lock the app?')){localStorage.removeItem('mtn_is_unlocked');location.reload();}}
+
+document.getElementById('photo').addEventListener('change',e=>{
+ let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=ev=>{photoData=ev.target.result;let pr=document.getElementById('preview');pr.src=photoData;pr.style.display='block';};r.readAsDataURL(f);
+});
+
+function saveAgent(){
+ let n=document.getElementById('name').value.trim();
+ let ph=document.getElementById('phone').value.trim();
+ let dTag=document.getElementById('deviceTag').value.trim();
+ let user=document.getElementById('username').value.trim();
+ let kiosk=document.getElementById('kioskId').value.trim();
+ let dNo=document.getElementById('deviceNo').value;
+ let addr=document.getElementById('addr').value.trim();
+ if(!n||!ph||!dTag||!user||!kiosk||!dNo){alert('Please fill all required fields: Name, Phone, Device Tag, Username, Kiosk ID, Device');return;}
+
+ if(editId!== null){
+  // UPDATE EXISTING
+  let idx=agents.findIndex(a=>a.id==editId);
+  if(idx!==-1){
+   agents[idx].name=n; agents[idx].phone=ph; agents[idx].deviceTag=dTag; agents[idx].username=user; agents[idx].kioskId=kiosk; agents[idx].deviceNo=dNo; agents[idx].addr=addr;
+   if(photoData) agents[idx].photo=photoData;
+  }
+  editId=null;
+  document.getElementById('formTitle').innerText="Add New Agent";
+  document.getElementById('saveBtn').innerText="💾 SAVE AGENT";
+  document.getElementById('cancelBtn').classList.add('hidden');
+ }else{
+  // CREATE NEW
+  let obj={id:Date.now(),name:n,phone:ph,deviceTag:dTag,username:user,kioskId:kiosk,deviceNo:dNo,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};
+  agents.unshift(obj);
+ }
+
+ localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));
+ ['name','phone','deviceTag','username','kioskId','deviceNo','addr'].forEach(id=>document.getElementById(id).value='');
+ document.getElementById('photo').value='';document.getElementById('preview').style.display='none';photoData='';
+ showAgents();
+}
+
+function editAg(i){
+ let a=agents[i];
+ editId=a.id;
+ document.getElementById('name').value=a.name;
+ document.getElementById('phone').value=a.phone;
+ document.getElementById('deviceTag').value=a.deviceTag;
+ document.getElementById('username').value=a.username;
+ document.getElementById('kioskId').value=a.kioskId;
+ document.getElementById('deviceNo').value=a.deviceNo;
+ document.getElementById('addr').value=a.addr||'';
+ document.getElementById('preview').src=a.photo;
+ document.getElementById('preview').style.display='block';
+ document.getElementById('formTitle').innerText="Edit Agent - "+a.name;
+ document.getElementById('saveBtn').innerText="💾 UPDATE AGENT";
+ document.getElementById('cancelBtn').classList.remove('hidden');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cancelEdit(){
+ editId=null; photoData='';
+ ['name','phone','deviceTag','username','kioskId','deviceNo','addr'].forEach(id=>document.getElementById(id).value='');
+ document.getElementById('preview').style.display='none';
+ document.getElementById('formTitle').innerText="Add New Agent";
+ document.getElementById('saveBtn').innerText="💾 SAVE AGENT";
+ document.getElementById('cancelBtn').classList.add('hidden');
+}
+
+function showAgents(){
+ let q=document.getElementById('search').value.toLowerCase();
+ let list=document.getElementById('list');list.innerHTML='';
+ let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q)||(a.deviceTag||'').toLowerCase().includes(q)||(a.username||'').toLowerCase().includes(q)||(a.kioskId||'').toLowerCase().includes(q));
+ document.getElementById('empty').style.display=filtered.length==0?'block':'none';
+ document.getElementById('totalCount').innerText=agents.length;
+ document.getElementById('countBadge').innerText=agents.length+' Agents';
+
+ filtered.forEach(a=>{
+  let idx=agents.findIndex(x=>x.id==a.id);
+  let div=document.createElement('div');div.className='agent';
+  div.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b> <span style="background:${a.deviceNo=='1'?'#00ff88':'#FFCC00'};color:#000;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold">DEV ${a.deviceNo}</span><br><small>📞 ${a.phone} | 🏷️ ${a.deviceTag}</small><br><small>👤 ${a.username} | 🏪 ${a.kioskId}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="edit" onclick="editAg(${idx})">EDIT</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div class="${openId==idx?'detail':'hidden'}"><p><b>Device Tag:</b> ${a.deviceTag}</p><p><b>Username:</b> ${a.username}</p><p><b>Kiosk ID:</b> ${a.kioskId}</p><p><b>Device No:</b> Device ${a.deviceNo}</p><p><b>Phone:</b> ${a.phone}</p><p><b>Address:</b> ${a.addr||'-'}</p><p><b>Total Devices:</b> ${agents.length} (Automatic)</p></div></div>`;
+  list.appendChild(div);
+ });
+}
 function toggle(i){openId=openId==i?-1:i;showAgents();}
 function delAg(i){if(confirm('Delete '+agents[i].name+'?')){agents.splice(i,1);localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));showAgents();}}
-function exportData(){if(agents.length==0){alert('No data to export');return;}let csv="Name,Phone,NIN,BVN,Address\n"+agents.map(a=>`"${a.name}","${a.phone}","${a.nin}","${a.bvn}","${a.addr}"`).join("\n");let blob=new Blob([csv],{type:'text/csv'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='MTN_Agents_Database.csv';a.click();}
+function exportData(){
+ if(agents.length==0){alert('No data to export');return;}
+ let csv="Name,Phone,Device Tag,Username,Kiosk ID,Device No,Address,Total Devices\n"+agents.map(a=>`"${a.name}","${a.phone}","${a.deviceTag}","${a.username}","${a.kioskId}","Device ${a.deviceNo}","${a.addr}","${agents.length}"`).join("\n");
+ let blob=new Blob([csv],{type:'text/csv'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='MTN_Agents_Database.csv';a.click();
+}
 showAgents();
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
 </script>
 </body>
 </html>
