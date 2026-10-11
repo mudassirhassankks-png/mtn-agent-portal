@@ -64,11 +64,11 @@ input:focus,select:focus{border-color:#FFCC00;outline:none}
 
 <div class="card">
 <h3 id="formTitle">Add New Agent</h3>
-<input id="name" placeholder="Agent Name *">
-<input id="phone" placeholder="Phone Number *">
-<input id="deviceTag" placeholder="Device Tag * e.g MTN-POS-001">
-<input id="username" placeholder="Username * e.g agent.musa">
-<input id="kioskId" placeholder="Kiosk ID * e.g KIOSK-GS-102">
+<input id="name" placeholder="Agent Name :">
+<input id="phone" placeholder="Phone Number :">
+<input id="deviceTag" placeholder="Device Tag :">
+<input id="username" placeholder="Username:">
+<input id="ninNumber" placeholder="NIN Number:" maxlength="11">
 <select id="deviceNo">
 <option value="">Select Device *</option>
 <option value="1">Device 1</option>
@@ -86,7 +86,7 @@ input:focus,select:focus{border-color:#FFCC00;outline:none}
 </div>
 
 <div class="card" style="padding:10px">
-<input id="search" placeholder="🔍 Search by Name, Phone, Device Tag, Kiosk ID..." oninput="showAgents()">
+<input id="search" placeholder="🔍 Search by Name, Phone, Device Tag, NIN..." oninput="showAgents()">
 </div>
 
 <div id="list"></div>
@@ -124,16 +124,16 @@ function saveAgent(){
  let ph=document.getElementById('phone').value.trim();
  let dTag=document.getElementById('deviceTag').value.trim();
  let user=document.getElementById('username').value.trim();
- let kiosk=document.getElementById('kioskId').value.trim();
+ let nin=document.getElementById('ninNumber').value.trim();
  let dNo=document.getElementById('deviceNo').value;
  let addr=document.getElementById('addr').value.trim();
- if(!n||!ph||!dTag||!user||!kiosk||!dNo){alert('Please fill all required fields: Name, Phone, Device Tag, Username, Kiosk ID, Device');return;}
+ if(!n||!ph||!dTag||!user||!nin||!dNo){alert('Please fill all required fields: Name, Phone, Device Tag, Username, NIN Number, Device');return;}
 
  if(editId!== null){
   // UPDATE EXISTING
   let idx=agents.findIndex(a=>a.id==editId);
   if(idx!==-1){
-   agents[idx].name=n; agents[idx].phone=ph; agents[idx].deviceTag=dTag; agents[idx].username=user; agents[idx].kioskId=kiosk; agents[idx].deviceNo=dNo; agents[idx].addr=addr;
+   agents[idx].name=n; agents[idx].phone=ph; agents[idx].deviceTag=dTag; agents[idx].username=user; agents[idx].ninNumber=nin; agents[idx].deviceNo=dNo; agents[idx].addr=addr;
    if(photoData) agents[idx].photo=photoData;
   }
   editId=null;
@@ -142,12 +142,12 @@ function saveAgent(){
   document.getElementById('cancelBtn').classList.add('hidden');
  }else{
   // CREATE NEW
-  let obj={id:Date.now(),name:n,phone:ph,deviceTag:dTag,username:user,kioskId:kiosk,deviceNo:dNo,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};
+  let obj={id:Date.now(),name:n,phone:ph,deviceTag:dTag,username:user,ninNumber:nin,deviceNo:dNo,addr,photo:photoData||'https://cdn-icons-png.flaticon.com/512/149/149071.png'};
   agents.unshift(obj);
  }
 
  localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));
- ['name','phone','deviceTag','username','kioskId','deviceNo','addr'].forEach(id=>document.getElementById(id).value='');
+ ['name','phone','deviceTag','username','ninNumber','deviceNo','addr'].forEach(id=>document.getElementById(id).value='');
  document.getElementById('photo').value='';document.getElementById('preview').style.display='none';photoData='';
  showAgents();
 }
@@ -159,7 +159,7 @@ function editAg(i){
  document.getElementById('phone').value=a.phone;
  document.getElementById('deviceTag').value=a.deviceTag;
  document.getElementById('username').value=a.username;
- document.getElementById('kioskId').value=a.kioskId;
+ document.getElementById('ninNumber').value=a.ninNumber;
  document.getElementById('deviceNo').value=a.deviceNo;
  document.getElementById('addr').value=a.addr||'';
  document.getElementById('preview').src=a.photo;
@@ -172,7 +172,7 @@ function editAg(i){
 
 function cancelEdit(){
  editId=null; photoData='';
- ['name','phone','deviceTag','username','kioskId','deviceNo','addr'].forEach(id=>document.getElementById(id).value='');
+ ['name','phone','deviceTag','username','ninNumber','deviceNo','addr'].forEach(id=>document.getElementById(id).value='');
  document.getElementById('preview').style.display='none';
  document.getElementById('formTitle').innerText="Add New Agent";
  document.getElementById('saveBtn').innerText="💾 SAVE AGENT";
@@ -182,7 +182,7 @@ function cancelEdit(){
 function showAgents(){
  let q=document.getElementById('search').value.toLowerCase();
  let list=document.getElementById('list');list.innerHTML='';
- let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q)||(a.deviceTag||'').toLowerCase().includes(q)||(a.username||'').toLowerCase().includes(q)||(a.kioskId||'').toLowerCase().includes(q));
+ let filtered=agents.filter(a=>a.name.toLowerCase().includes(q)||a.phone.includes(q)||(a.deviceTag||'').toLowerCase().includes(q)||(a.username||'').toLowerCase().includes(q)||(a.ninNumber||'').toLowerCase().includes(q));
  document.getElementById('empty').style.display=filtered.length==0?'block':'none';
  document.getElementById('totalCount').innerText=agents.length;
  document.getElementById('countBadge').innerText=agents.length+' Agents';
@@ -190,7 +190,7 @@ function showAgents(){
  filtered.forEach(a=>{
   let idx=agents.findIndex(x=>x.id==a.id);
   let div=document.createElement('div');div.className='agent';
-  div.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b> <span style="background:${a.deviceNo=='1'?'#00ff88':'#FFCC00'};color:#000;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold">DEV ${a.deviceNo}</span><br><small>📞 ${a.phone} | 🏷️ ${a.deviceTag}</small><br><small>👤 ${a.username} | 🏪 ${a.kioskId}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="edit" onclick="editAg(${idx})">EDIT</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div class="${openId==idx?'detail':'hidden'}"><p><b>Device Tag:</b> ${a.deviceTag}</p><p><b>Username:</b> ${a.username}</p><p><b>Kiosk ID:</b> ${a.kioskId}</p><p><b>Device No:</b> Device ${a.deviceNo}</p><p><b>Phone:</b> ${a.phone}</p><p><b>Address:</b> ${a.addr||'-'}</p><p><b>Total Devices:</b> ${agents.length} (Automatic)</p></div></div>`;
+  div.innerHTML=`<img src="${a.photo}"><div style="flex:1"><b>${a.name}</b> <span style="background:${a.deviceNo=='1'?'#00ff88':'#FFCC00'};color:#000;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold">DEV ${a.deviceNo}</span><br><small>📞 ${a.phone} | 🏷️ ${a.deviceTag}</small><br><small>👤 ${a.username} | 🆔 NIN: ${a.ninNumber}</small><div class="actions"><button class="view" onclick="toggle(${idx})">${openId==idx?'CLOSE':'VIEW'}</button><button class="edit" onclick="editAg(${idx})">EDIT</button><button class="del" onclick="delAg(${idx})">DELETE</button></div><div class="${openId==idx?'detail':'hidden'}"><p><b>Device Tag:</b> ${a.deviceTag}</p><p><b>Username:</b> ${a.username}</p><p><b>NIN Number:</b> ${a.ninNumber}</p><p><b>Device No:</b> Device ${a.deviceNo}</p><p><b>Phone:</b> ${a.phone}</p><p><b>Address:</b> ${a.addr||'-'}</p><p><b>Total Devices:</b> ${agents.length} (Automatic)</p></div></div>`;
   list.appendChild(div);
  });
 }
@@ -198,7 +198,7 @@ function toggle(i){openId=openId==i?-1:i;showAgents();}
 function delAg(i){if(confirm('Delete '+agents[i].name+'?')){agents.splice(i,1);localStorage.setItem('mtn_agents_secure_en',JSON.stringify(agents));showAgents();}}
 function exportData(){
  if(agents.length==0){alert('No data to export');return;}
- let csv="Name,Phone,Device Tag,Username,Kiosk ID,Device No,Address,Total Devices\n"+agents.map(a=>`"${a.name}","${a.phone}","${a.deviceTag}","${a.username}","${a.kioskId}","Device ${a.deviceNo}","${a.addr}","${agents.length}"`).join("\n");
+ let csv="Name,Phone,Device Tag,Username,NIN Number,Device No,Address,Total Devices\n"+agents.map(a=>`"${a.name}","${a.phone}","${a.deviceTag}","${a.username}","${a.ninNumber}","Device ${a.deviceNo}","${a.addr}","${agents.length}"`).join("\n");
  let blob=new Blob([csv],{type:'text/csv'});let url=URL.createObjectURL(blob);let a=document.createElement('a');a.href=url;a.download='MTN_Agents_Database.csv';a.click();
 }
 showAgents();
